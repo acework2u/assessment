@@ -2,4 +2,9 @@
 
 #go mod init github.com/acework2u/assessment
 
+#github.com/acework2u/assessment
+
 #postgres://rtkchzmv:CdMt9OJYhSXEwW_3EU0V3FFLJDgRjhp6@john.db.elephantsql.com/rtkchzmv
+
+#assessment
+#postgres://yyrrnwpr:Avk9HhlWGrrmGcvGAhtC0nYrAj0JMQA6@john.db.elephantsql.com/yyrrnwpr

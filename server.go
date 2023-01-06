@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 
+	"github.com/acework2u/assessment/expense"
 	"github.com/labstack/echo/v4"
 )
 
@@ -13,8 +13,15 @@ func main() {
 	pl("Please use server.go for main file")
 	// pl("start at port:", os.Getenv("PORT"))
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
+
+	//Router
+	getExps := expense.GetExpense
+	saveExps := expense.SaveExpense
+	e.GET("/expenses", getExps)
+	e.GET("/expenses/:id", getExps)
+	e.POST("/expenses", saveExps)
+	e.PUT("/expenses/:id", getExps)
+	e.DELETE("/expenses", getExps)
+
 	e.Logger.Fatal(e.Start(":2526"))
 }
