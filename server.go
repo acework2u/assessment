@@ -11,8 +11,11 @@ var pl = fmt.Println
 
 func main() {
 	pl("Please use server.go for main file")
+	//DB
 	// pl("start at port:", os.Getenv("PORT"))
 	e := echo.New()
+
+	//Mid
 
 	//Router
 	getExps := expense.GetExpense
@@ -23,5 +26,5 @@ func main() {
 	e.PUT("/expenses/:id", getExps)
 	e.DELETE("/expenses", getExps)
 
-	e.Logger.Fatal(e.Start(":2526"))
+	e.Logger.Fatal(e.Start(":2565"))
 }
