@@ -1,0 +1,5 @@
+#https://github.com/acework2u/assessment.git
+
+#go mod init github.com/acework2u/assessment
+
+#postgres://rtkchzmv:CdMt9OJYhSXEwW_3EU0V3FFLJDgRjhp6@john.db.elephantsql.com/rtkchzmv
