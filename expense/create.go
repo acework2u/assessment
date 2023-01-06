@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
+	_ "github.com/lib/pq"
 )
 
 // type ExpenseInfo struct {
@@ -49,13 +51,14 @@ func SaveExpense(c echo.Context) (err error) {
 		log.Println("Connect database...")
 	}
 
-	sqlStmt := "INSERT INTO expense (title,amount,note,tags) VALUES ($1,$2,$3,ARRAY$4)"
+	sqlStmt := "INSERT INTO expense (title,amount,note,tags) VALUES ($1,$2,$3,ARRAY[$4])"
 
-	res, err := db.Query(sqlStmt, expsRaw.Title, expsRaw.Amount, expsRaw.Note, expsRaw.Tags)
+	res, err := db.Query(sqlStmt, expsRaw.Title, expsRaw.Amount, expsRaw.Note, strings.Join([]string(expsRaw.Tags), ","))
 	// res, err := db.Exec("INSERT INTO expense (title,amount,note,tags) VALUES ('strawberry smoothie',67,'night market promotion discount 10 bath',ARRAY['food', 'beverage'])")
 
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
+		return c.JSON(http.StatusServiceUnavailable, "Error")
 	} else {
 		fmt.Println(res)
 		return c.JSON(http.StatusCreated, expsRaw)
