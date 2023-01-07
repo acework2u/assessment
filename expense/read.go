@@ -25,7 +25,7 @@ type Expenses struct {
 	Expenses []Expense `json:"expenses"`
 }
 
-func GetExpense(c echo.Context) error {
+func GetExpenses(c echo.Context) error {
 
 	url := "postgres://yyrrnwpr:Avk9HhlWGrrmGcvGAhtC0nYrAj0JMQA6@john.db.elephantsql.com/yyrrnwpr"
 	db, err := sql.Open("postgres", url)
@@ -73,4 +73,51 @@ func GetExpense(c echo.Context) error {
 	//log.Println(result)
 	return c.JSON(http.StatusCreated, tagsList)
 	//return c.String(http.StatusOK, "OK")
+}
+
+func GetExpense(c echo.Context) error {
+
+	id := c.Param("id")
+	//DB Connect
+	url := "postgres://yyrrnwpr:Avk9HhlWGrrmGcvGAhtC0nYrAj0JMQA6@john.db.elephantsql.com/yyrrnwpr"
+	db, err := sql.Open("postgres", url)
+	if err != nil {
+		log.Fatal("Connect to database err", err)
+	}
+
+	if err = db.Ping(); err != nil {
+		panic(err)
+	} else {
+		log.Println("Connect database...3")
+	}
+
+	sqlStmt := "SELECT * FROM expenses WHERE id = $1"
+	rows, err := db.Query(sqlStmt, id)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer rows.Close()
+	var tagsList TageList
+	result := Expenses{}
+	for rows.Next() {
+		var expense Expense
+		var tags string
+
+		//err2 := rows.Scan(&tags)
+		err2 := rows.Scan(&expense.Id, &expense.Title, &expense.Amount, &expense.Note, &tags)
+
+		if err2 != nil {
+			log.Println(err2)
+			return err2
+		}
+		//sTag := strings.Split(tags, ",")
+		tagsList = []string{tags}
+		expense.Tags = tagsList
+		result.Expenses = append(result.Expenses, expense)
+
+		log.Println(result)
+	}
+	log.Println(result)
+	return c.JSON(http.StatusOK, result)
 }
