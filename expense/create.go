@@ -33,10 +33,10 @@ func SaveExpense(c echo.Context) (err error) {
 
 	// load in to struct
 	expsRaw := expenseDTO{
-		Title:  u.TITLE,
-		Amount: u.AMOUNT,
-		Note:   u.NOTE,
-		Tags:   u.TAGS,
+		Title:  u.Title,
+		Amount: u.Amount,
+		Note:   u.Note,
+		Tags:   u.Tags,
 	}
 
 	url := "postgres://yyrrnwpr:Avk9HhlWGrrmGcvGAhtC0nYrAj0JMQA6@john.db.elephantsql.com/yyrrnwpr"

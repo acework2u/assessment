@@ -6,8 +6,22 @@ import (
 	"log"
 	"net/http"
 
+	_ "github.com/lib/pq"
+
 	"github.com/labstack/echo/v4"
 )
+
+type Expense struct {
+	Id     string   `json:"id"`
+	Title  string   `json:"title"`
+	Amount float32  `json:"amount"`
+	Note   string   `json:"note"`
+	Tags   []string `json:tags`
+}
+
+type Expenses struct {
+	Expenses []Expense `json:"expenses"`
+}
 
 func GetExpense(c echo.Context) error {
 
@@ -20,7 +34,7 @@ func GetExpense(c echo.Context) error {
 	if err = db.Ping(); err != nil {
 		panic(err)
 	} else {
-		log.Println("Connect database...")
+		log.Println("Connect database...3")
 	}
 
 	sqlStmt := "SELECT id,title,amount,note,tags FROM expense order by id"
@@ -33,17 +47,22 @@ func GetExpense(c echo.Context) error {
 	defer rows.Close()
 
 	result := Expenses{}
-	// for rows.Next() {
-	// 	expense := Expenses{}
-	// 	err2 := rows.Scan(&expense.id, &expense.title, &expense.amount, &expense.note, &expense.tags)
 
-	// 	if err2 != nil {
-	// 		return err2
-	// 	}
+	for rows.Next() {
+		var expense Expense
 
-	// 	result.Expenses = append(result.Expenses, expense)
-	// }
+		err2 := rows.Scan(&expense.Id, &expense.Title, &expense.Amount, &expense.Note, &expense.Tags)
+
+		if err2 != nil {
+			log.Println(err2)
+			return err2
+		}
+
+		result.Expenses = append(result.Expenses, expense)
+
+		log.Println(rows)
+	}
 	log.Println(result)
-	// return c.JSON(http.StatusCreated, result)
-	return c.String(http.StatusOK, "Read")
+	//return c.JSON(http.StatusCreated, result)
+	return c.String(http.StatusOK, "OK")
 }
