@@ -16,8 +16,10 @@ type Expense struct {
 	Title  string   `json:"title"`
 	Amount float32  `json:"amount"`
 	Note   string   `json:"note"`
-	Tags   []string `json:tags`
+	Tags   TageList `json:tags`
 }
+
+type TageList []string
 
 type Expenses struct {
 	Expenses []Expense `json:"expenses"`
@@ -37,7 +39,8 @@ func GetExpense(c echo.Context) error {
 		log.Println("Connect database...3")
 	}
 
-	sqlStmt := "SELECT id,title,amount,note,tags FROM expense order by id"
+	//sqlStmt := "SELECT id,title,amount,note,tags FROM expense order by id"
+	sqlStmt := "SELECT tags FROM expense order by id"
 
 	rows, err := db.Query(sqlStmt)
 	if err != nil {
@@ -46,23 +49,28 @@ func GetExpense(c echo.Context) error {
 
 	defer rows.Close()
 
-	result := Expenses{}
+	//result := Expenses{}
+
+	var tagsList TageList
 
 	for rows.Next() {
-		var expense Expense
+		//var expense Expense
+		var tags string
 
-		err2 := rows.Scan(&expense.Id, &expense.Title, &expense.Amount, &expense.Note, &expense.Tags)
+		err2 := rows.Scan(&tags)
+		//err2 := rows.Scan(&expense.Id, &expense.Title, &expense.Amount, &expense.Note, &expense.Tags)
 
 		if err2 != nil {
 			log.Println(err2)
 			return err2
 		}
+		//sTag := strings.Split(tags, ",")
+		tagsList = []string{tags}
+		//result.Expenses = append(result.Expenses, expense)
 
-		result.Expenses = append(result.Expenses, expense)
-
-		log.Println(rows)
+		log.Println(tagsList)
 	}
-	log.Println(result)
-	//return c.JSON(http.StatusCreated, result)
-	return c.String(http.StatusOK, "OK")
+	//log.Println(result)
+	return c.JSON(http.StatusCreated, tagsList)
+	//return c.String(http.StatusOK, "OK")
 }

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/labstack/echo/v4"
+	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 )
 
@@ -48,18 +48,20 @@ func SaveExpense(c echo.Context) (err error) {
 	if err = db.Ping(); err != nil {
 		panic(err)
 	} else {
-		log.Println("Connect database...")
+		log.Println("Connect database...New")
 	}
 
-	sqlStmt := "INSERT INTO expense (title,amount,note,tags) VALUES ($1,$2,$3,ARRAY[$4])"
+	//sqlStmt := "INSERT INTO expense (title,amount,note,tags) VALUES ($1,$2,$3,ARRAY[$4])"
+	sqlStmt := "INSERT INTO expenses (title,amount,note,tags) VALUES ($1,$2,$3,$4) RETURNING id"
 
-	res, err := db.Query(sqlStmt, expsRaw.Title, expsRaw.Amount, expsRaw.Note, strings.Join([]string(expsRaw.Tags), ","))
-	// res, err := db.Exec("INSERT INTO expense (title,amount,note,tags) VALUES ('strawberry smoothie',67,'night market promotion discount 10 bath',ARRAY['food', 'beverage'])")
+	res, err := db.Query(sqlStmt, expsRaw.Title, expsRaw.Amount, expsRaw.Note, pq.Array(expsRaw.Tags))
+	//res, err := db.Query(sqlStmt, expsRaw.Title, expsRaw.Amount, expsRaw.Note, strings.Join([]string(expsRaw.Tags), ","))
 
 	if err != nil {
-		// fmt.Println(err)
+		fmt.Println(err)
 		return c.JSON(http.StatusServiceUnavailable, "Error")
 	} else {
+
 		fmt.Println(res)
 		return c.JSON(http.StatusCreated, expsRaw)
 	}

@@ -22,7 +22,14 @@ func init() {
 
 	// Check Table
 
-	creatTb := `CREATE TABLE IF NOT EXISTS expense (id SERIAL PRIMARY KEY, title varchar(255), amount INT, note varchar(255), tags varchar[] )`
+	//creatTb := `CREATE TABLE IF NOT EXISTS expense (id SERIAL PRIMARY KEY, title varchar(255), amount INT, note varchar(255), tags varchar[] )`
+	creatTb := `	CREATE TABLE IF NOT EXISTS expenses (
+		id SERIAL PRIMARY KEY,
+		title TEXT,
+		amount FLOAT,
+		note TEXT,
+		tags TEXT[]
+	);`
 
 	_, err = db.Exec(creatTb)
 	if err != nil {
