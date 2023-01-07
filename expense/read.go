@@ -116,8 +116,8 @@ func GetExpense(c echo.Context) error {
 		expense.Tags = tagsList
 		result.Expenses = append(result.Expenses, expense)
 
-		log.Println(result)
+		//log.Println(result)
 	}
-	log.Println(result)
+	//log.Println(result)
 	return c.JSON(http.StatusOK, result)
 }
