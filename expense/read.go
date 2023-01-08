@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 
 	"github.com/labstack/echo/v4"
@@ -21,9 +22,7 @@ type Expense struct {
 
 type TageList []string
 
-type Expenses struct {
-	Expenses []Expense `json:"expenses"`
-}
+type Expenses []Expense
 
 func GetExpenses(c echo.Context) error {
 
@@ -64,8 +63,9 @@ func GetExpenses(c echo.Context) error {
 			log.Println(err2)
 			return err2
 		}
-		//sTag := strings.Split(tags, ",")
+
 		tagsList = []string{tags}
+
 		//result.Expenses = append(result.Expenses, expense)
 
 		log.Println(tagsList)
@@ -98,23 +98,22 @@ func GetExpense(c echo.Context) error {
 	}
 
 	defer rows.Close()
-	var tagsList TageList
+
 	result := Expenses{}
 	for rows.Next() {
 		var expense Expense
-		var tags string
+		var tags []string
 
 		//err2 := rows.Scan(&tags)
-		err2 := rows.Scan(&expense.Id, &expense.Title, &expense.Amount, &expense.Note, &tags)
+		err2 := rows.Scan(&expense.Id, &expense.Title, &expense.Amount, &expense.Note, pq.Array(&tags))
 
 		if err2 != nil {
 			log.Println(err2)
 			return err2
 		}
-		//sTag := strings.Split(tags, ",")
-		tagsList = []string{tags}
-		expense.Tags = tagsList
-		result.Expenses = append(result.Expenses, expense)
+
+		expense.Tags = tags
+		result = append(result, expense)
 
 		//log.Println(result)
 	}
