@@ -20,11 +20,11 @@ func main() {
 	//Router
 	getExps := expense.GetExpense
 	saveExps := expense.SaveExpense
+	updateExps := expense.PutExpense
 	e.GET("/expenses", getExps)
 	e.GET("/expenses/:id", getExps)
 	e.POST("/expenses", saveExps)
-	e.PUT("/expenses/:id", getExps)
-	e.DELETE("/expenses", getExps)
+	e.PUT("/expenses/:id", updateExps)
 
 	e.Logger.Fatal(e.Start(":2565"))
 }
