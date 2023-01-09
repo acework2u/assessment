@@ -18,12 +18,13 @@ func main() {
 	//Mid
 
 	//Router
+	getAllExps := expense.GetExpenses
 	getExps := expense.GetExpense
 	saveExps := expense.SaveExpense
 	updateExps := expense.PutExpense
 	delExps := expense.DelExpense
 
-	e.GET("/expenses", getExps)
+	e.GET("/expenses", getAllExps)
 	e.GET("/expenses/:id", getExps)
 	e.POST("/expenses", saveExps)
 	e.PUT("/expenses/:id", updateExps)

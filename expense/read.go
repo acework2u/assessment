@@ -26,6 +26,7 @@ type Expenses []Expense
 
 func GetExpenses(c echo.Context) error {
 
+	//DB Connect
 	url := "postgres://yyrrnwpr:Avk9HhlWGrrmGcvGAhtC0nYrAj0JMQA6@john.db.elephantsql.com/yyrrnwpr"
 	db, err := sql.Open("postgres", url)
 	if err != nil {
@@ -38,9 +39,7 @@ func GetExpenses(c echo.Context) error {
 		log.Println("Connect database...3")
 	}
 
-	//sqlStmt := "SELECT id,title,amount,note,tags FROM expense order by id"
-	sqlStmt := "SELECT tags FROM expense order by id"
-
+	sqlStmt := "SELECT * FROM expenses"
 	rows, err := db.Query(sqlStmt)
 	if err != nil {
 		fmt.Println(err)
@@ -48,31 +47,26 @@ func GetExpenses(c echo.Context) error {
 
 	defer rows.Close()
 
-	//result := Expenses{}
-
-	var tagsList TageList
-
+	result := Expenses{}
 	for rows.Next() {
-		//var expense Expense
-		var tags string
+		var expense Expense
+		var tags []string
 
-		err2 := rows.Scan(&tags)
-		//err2 := rows.Scan(&expense.Id, &expense.Title, &expense.Amount, &expense.Note, &expense.Tags)
+		//err2 := rows.Scan(&tags)
+		err2 := rows.Scan(&expense.Id, &expense.Title, &expense.Amount, &expense.Note, pq.Array(&tags))
 
 		if err2 != nil {
 			log.Println(err2)
 			return err2
 		}
 
-		tagsList = []string{tags}
+		expense.Tags = tags
+		result = append(result, expense)
 
-		//result.Expenses = append(result.Expenses, expense)
-
-		log.Println(tagsList)
+		//log.Println(result)
 	}
 	//log.Println(result)
-	return c.JSON(http.StatusCreated, tagsList)
-	//return c.String(http.StatusOK, "OK")
+	return c.JSON(http.StatusOK, result)
 }
 
 func GetExpense(c echo.Context) error {
